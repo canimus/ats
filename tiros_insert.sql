@@ -1,0 +1,14 @@
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,206,248.5833282470703,0,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,232,286.58331298828125,1,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,201,301.58331298828125,0,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,224,355.58331298828125,1,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,224,409.58331298828125,0,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,322,227.5833282470703,0,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,322,204.5833282470703,1,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,381,211.5833282470703,0,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,260,123.58332824707031,0,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,935,82.58332824707031,0,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,797,218.5833282470703,1,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,914,188.5833282470703,0,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,908,201.5833282470703,1,'p');
+INSERT into game_stats (player_id,game_id,coord_x,coord_y,coord_z,stat_type) values (2,1,905,243.5833282470703,0,'p');
