@@ -21,7 +21,7 @@
 </ul>   
 </div>
 
-<div>
+<div style="display: none" id="control_panel">
   <select name="game_name" id="game_name">
     <?php 
     foreach ($games as $game) {
@@ -61,6 +61,7 @@
 <script>
   var h = 540, w=960;
   var shoot_collection = [];
+  var color_scale = d3.scale.category10();
 
   court_shapes = [
     { // Base Court
@@ -554,6 +555,7 @@
   d3.select("#board_right").attr("transform", "rotate(180 "+ court_scale(47)+" "+court_scale(25)+")");
   d3.selectAll("line[class='thick right']").attr("transform", "rotate(180 "+ court_scale(47)+" "+court_scale(25)+")");
 
+  // Player name and shoot legend
   player_legend = svg.append("g").attr("transform", "translate(160,460)").attr("id", "player_legend");
   player_legend.append("text").attr("id","score_player").attr("x", 0).attr("y", 8).text("").style("font-weight", "bold").style("font-size", "22px");
   player_legend.append("circle").attr("cx", 5).attr("cy", 24).attr("r",6).style("fill", "#59ce29").style("stroke", "#46a321");
@@ -561,19 +563,28 @@
   player_legend.append("circle").attr("cx", 5).attr("cy", 40).attr("r",6).style("fill", "#ea808e").style("stroke", "#dc2c44");
   player_legend.append("text").attr("x", 16).attr("y", 44).text("Fallo").style("font-weight", "normal").style("font-size", "11px").style("fill","#555").style("stroke", "none");
 
-  player_legend.append("text").attr("x", 200).attr("y", 5).text("Triples:").style("font-weight", "normal").style("font-size", "11px").style("fill","#555").style("stroke", "none");
+  // Three pointers
+  player_legend.append("text").attr("x", 210).attr("y", 5).text("Triples:").style("font-weight", "normal").style("font-size", "11px").style("fill","#555").style("stroke", "none");
   player_legend.append("text").attr("id","score_3p").attr("x", 260).attr("y", 5).text("0").style("font-weight", "bold").style("fill","#000").style("opacity", 0).style("font-size", "14px");
 
-  player_legend.append("text").attr("x", 200).attr("y", 25).text("Dobles:").style("font-weight", "normal").style("font-size", "11px").style("fill","#555").style("stroke", "none");
+  // Throws inside the area
+  player_legend.append("text").attr("x", 210).attr("y", 25).text("Dobles:").style("font-weight", "normal").style("font-size", "11px").style("fill","#555").style("stroke", "none");
   player_legend.append("text").attr("id","score_2p").attr("x", 260).attr("y", 25).text("5").style("font-weight", "bold").style("fill","#000").style("opacity", 0).style("font-size", "14px");
 
-  player_legend.append("text").attr("x", 200).attr("y", 45).text("Libres:").style("font-weight", "normal").style("font-size", "11px").style("fill","#555").style("stroke", "none");
+  // Free throws
+  player_legend.append("text").attr("x", 210).attr("y", 45).text("Libres:").style("font-weight", "normal").style("font-size", "11px").style("fill","#555").style("stroke", "none");
   player_legend.append("text").attr("id","score_1p").attr("x", 260).attr("y", 45).text("0").style("font-weight", "bold").style("fill","#000").style("opacity", 0).style("font-size", "14px");
 
-  player_legend.append("text").attr("id","score_total").attr("x", 300).attr("y", 15).text("0").style("font-weight", "bold").style("font-size", "30px").style("fill","#000").style("opacity", 1);
-  player_legend.append("text").attr("x", 300).attr("y", 35).text("Puntos").style("font-weight", "bold").style("font-size", "16px").style("fill","#000").style("opacity", 1);
-  player_legend.append("text").attr("id","score_relative").attr("x", 300).attr("y", 50).text("(0/0)").style("font-weight", "normal").style("font-size", "11px").style("fill","#555").style("stroke", "none").style("opacity", 1);
-  player_legend.append("text").attr("id","score_pct").attr("x", 300).attr("y", 62).text("(0/0)").style("font-weight", "bold").style("font-size", "11px").style("fill","#9e7cc6").style("stroke", "none").style("opacity", 0);
+  // Score Total
+  player_legend.append("text").attr("id","score_total").attr("x", 345).attr("y", 22).attr("text-anchor", "middle").text("0").style("font-weight", "bold").style("font-size", "26px").style("fill","#000").style("opacity", 1);
+  player_legend.append("text").attr("x", 345).attr("y", 35).attr("text-anchor", "middle").text("Puntos").style("font-weight", "bold").style("font-size", "14px").style("fill","#000").style("opacity", 1);
+  player_legend.append("text").attr("id","score_relative").attr("x", 345).attr("y", 50).attr("text-anchor", "middle").text("(0/0)").style("font-weight", "normal").style("font-size", "11px").style("fill","#555").style("stroke", "none").style("opacity", 1);
+
+  // Fouls Total
+  player_legend.append("text").attr("id","fouls_total").attr("x", 725).attr("y", 22).attr("text-anchor", "middle").text("0").style("font-weight", "bold").style("font-size", "26px").style("fill","#000").style("opacity", 1);
+  player_legend.append("text").attr("x", 725).attr("y", 35).attr("text-anchor", "middle").text("Faltas").style("font-weight", "bold").style("font-size", "14px").style("fill","#000").style("opacity", 1);
+  player_legend.append("text").attr("id","fouls_relative").attr("x", 725).attr("y", 50).attr("text-anchor", "middle").text("(0/0)").style("font-weight", "normal").style("font-size", "11px").style("fill","#555").style("stroke", "none").style("opacity", 1);  
+  //player_legend.append("text").attr("id","score_pct").attr("x", 345).attr("y", 62).attr("text-anchor", "middle").text("(0/0)").style("font-weight", "bold").style("font-size", "11px").style("fill","#9e7cc6").style("stroke", "none").style("opacity", 0);
 
 
   $.ajax({
@@ -593,7 +604,8 @@
           "p1": d3.sum(d.values.filter(function(u){ return u.stat_type=="p1";}), function(o){ return +o.z*1}), 
           "p3": d3.sum(d.values.filter(function(u){ return u.stat_type=="p3";}), function(o){ return +o.z*1}),
           //"stats": d.values.filter(function(d) { return d.stat_type.match(/r|a|l|s|b/); })
-          "stats": count_stats(d)
+          "stats": count_stats(d),
+          "f":3
         }
         });
       
@@ -643,13 +655,13 @@
   function draw_stat_bar(stat_array) {
     var x = d3.scale.linear()
           .domain([0, d3.max(stat_array)])
-          .range([0, 200]);
+          .range([0, 150]);
 
          var stat_chart = player_legend.append("g")
          .attr("id", "stat_chart")
-          .attr("width", 320)
+          .attr("width", 200)
           .attr("height", 14 * stat_array.length)
-          .attr("transform", "translate(480,-10)");
+          .attr("transform", "translate(510,-10)");
 
         stat_chart.selectAll("rect")
            .data(stat_array)
@@ -794,6 +806,20 @@
         this.textContent = parseInt(i(t))
       }
     });
+
+    d3.select("#fouls_total").text("0").style("opacity", 1);
+    fouls_transition = d3.select("#fouls_total").transition().ease("linear");
+
+    fouls_transition
+    .duration(500)
+    .tween("text", function(w) {
+      console.log("1:"+d.f);
+      console.log("2:"+this.textContent);
+      l = d3.interpolateNumber(parseInt(this.textContent), d.f);
+      return function(e) {
+        this.textContent = parseInt(l(e));
+      }
+    });
     
     var good_shoots = d.shoot.filter(function(shoot_good) { return +shoot_good.z == 1 }).length;
     var total_shoots = d.shoot.length;
@@ -802,9 +828,16 @@
     if ( total_shoots == 0) {
       total_shoots += 1;
     }
-    d3.select("#score_pct").text( d3.round( ( good_shoots / total_shoots)*100 , 2)+"% efectividad").style("opacity", 1);
+
+    d3.select("#fouls_relative").text(  d.f + " de 5");
+    
+    //d3.select("#score_pct").text( d3.round( ( good_shoots / total_shoots)*100 , 2)+"% efectividad").style("opacity", 1);
 
     draw_stat_bar(d.stats);
+
+    draw_foul_chart(d.f);
+
+    draw_eficiency(d3.round( ( good_shoots / total_shoots)*100 , 2));
 
     // Draw each shoot circle in court
     d.shoot.forEach(function(i,p) {      
@@ -884,6 +917,144 @@
     local_stat_array.push(d3.sum(d3.values(q).map(function(v) {return v.stat_type}), function(z) { return z=="s"}));
     local_stat_array.push(d3.sum(d3.values(q).map(function(v) {return v.stat_type}), function(z) { return z=="b"}));
     return local_stat_array;
+  }
+
+  function tweenPie(b) {
+    i = d3.interpolate({startAngle:0, endAngle:0}, b);
+    return function(t) {
+      return d3.svg.arc.outerRadius(42).innerRadius(35)(i(t));
+    } 
+  }
+
+  function draw_eficiency(percentage_good) {
+    var donut = d3.layout.pie();
+    var arc = d3.svg.arc().outerRadius(42).innerRadius(35);
+    var arc_total = d3.svg.arc().outerRadius(42).innerRadius(35).startAngle(0).endAngle(Math.PI*2);
+
+    svg.select("#arc_container").remove();
+
+    var arc_container = svg.append("g").attr("transform", "translate(505,485)").attr("id", "arc_container").data([arc_data]);
+    var arc_data = donut([percentage_good,(100-percentage_good)]);
+    arc_container.selectAll("path.arc").data(arc_data.sort(function(a,b) { return d3.descending(a,b)} ), function(d) { return d.value;}).enter()
+    .append("path")
+    .attr("class", "arc")
+    .style("fill", function(d,i) { 
+      if (i==0) {
+        return "#59ce29";
+      } else {
+        return "#eee";
+      }
+    })
+    .style("stroke", "none")
+    .attr("d", function(d,i) { 
+      if (i==0) {
+        return arc(d);
+      } else {
+        return arc(d);
+      }
+    });
+
+
+    arc_container.selectAll("text.arc").data(arc_data.sort(function(a,b) { return d3.descending(a,b)} ), function(d) { return d.value;}).enter()
+    .append("text")
+    .attr("class", function(d,i) { return "arc_"+i; })
+    .attr("transform", function(d) { return "translate("+arc.centroid(d)+") rotate(0)" })
+    .text(function(d) { return d3.round(d.value,2)+"%"; })
+    .style("font-weight", "bold")
+    .style("font-size", "11px")
+    .style("opacity", function(d,i) {
+      if (i>0) {
+        return 0;
+      } else {
+        return 0;
+      }
+    });
+
+
+
+    // Animation of text
+    arc_container.selectAll("text.arc_1").remove();
+    arc_container.selectAll("text.arc_0").transition().duration(1000).ease("cubic-out").attr("transform", "translate(45,-15)").style("opacity",1);
+
+
+    trans_arc = arc_container.selectAll("path.arc").transition();
+    trans_arc.duration(1000).ease("elastic")
+    .attr("transform", function(d,i) {
+      if (i==0) {
+        return "rotate(-"+(d.startAngle*(180/Math.PI))+")"
+      } else {
+        return "rotate(-"+(d.endAngle*(180/Math.PI))+")"
+      }
+    });
+
+  }
+
+  function draw_foul_chart(number_of_fouls) {
+    
+    console.log("Drawiging Foul Chart");
+
+    var donut = d3.layout.pie();
+    var arc = d3.svg.arc().outerRadius(42).innerRadius(35);
+    var arc_total = d3.svg.arc().outerRadius(42).innerRadius(35).startAngle(0).endAngle(Math.PI*2);
+
+    svg.select("#foul_container").remove();
+
+    var foul_container = svg.append("g").attr("transform", "translate(885,485)").attr("id", "foul_container").data([arc_data]);
+    var arc_data = donut([(number_of_fouls*20),(100-(number_of_fouls*20))]);
+    foul_container.selectAll("path.arc").data(arc_data.sort(function(a,b) { return d3.descending(a,b)} ), function(d) { return d.value;}).enter()
+    .append("path")
+    .attr("class", "arc")
+    .style("fill", function(d,i) { 
+      if (i==0) {
+        return "#ea808e";
+      } else {
+        return "#eee";
+      }
+    })
+    .style("stroke", "none")
+    .attr("d", function(d,i) { 
+      if (i==0) {
+        return arc(d);
+      } else {
+        return arc(d);
+      }
+    });
+
+
+    foul_container.selectAll("text.arc").data(arc_data.sort(function(a,b) { return d3.descending(a,b)} ), function(d) { return d.value;}).enter()
+    .append("text")
+    .attr("class", function(d,i) { return "arc_"+i; })
+    .attr("transform", function(d) { return "translate("+arc.centroid(d)+") rotate(0)" })
+    .text(function(d) { return d3.round(d.value,2)+"%"; })
+    .style("font-weight", "bold")
+    .style("font-size", "11px")
+    .style("opacity", function(d,i) {
+      if (i>0) {
+        return 0;
+      } else {
+        return 0;
+      }
+    });
+
+
+
+    // Animation of text
+    foul_container.selectAll("text.arc_1").remove();
+    foul_container.selectAll("text.arc_0").transition().duration(1000).ease("cubic-out").attr("transform", "translate(45,-15)").style("opacity",1);
+
+
+    trans_arc = foul_container.selectAll("path.arc").transition();
+    trans_arc.duration(1000).ease("elastic")
+    .attr("transform", function(d,i) {
+      if (i==0) {
+        return "rotate(-"+(d.startAngle*(180/Math.PI))+")"
+      } else {
+        return "rotate(-"+(d.endAngle*(180/Math.PI))+")"
+      }
+    });
+
+
+
   }
 </script>
 </body>
