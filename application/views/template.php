@@ -193,7 +193,7 @@
           "p3": d3.sum(d.values.filter(function(u){ return u.stat_type=="p3";}), function(o){ return +o.z*1}),
           //"stats": d.values.filter(function(d) { return d.stat_type.match(/r|a|l|s|b/); })
           "stats": count_stats(d),
-          "f":1
+          "f": d.values.filter(function(d) { return d.stat_type == "f"; }).length
         }
         });
       
@@ -402,6 +402,7 @@
     fouls_transition = d3.select("#fouls_total").transition().ease("linear");
 
     fouls_transition
+    .delay(2900)
     .duration(500)
     .tween("text", function(w) {
       
@@ -560,7 +561,13 @@
     foul_container.append("path").attr("d", function(d) { return arc_pct({startAngle:0, endAngle:0});}).style("fill", "#ea808e").style("stroke", "none").attr("id", "foul_path");
     foul_container.append("text").attr("transform", function(d) { 
       return "translate(" +arc_pct.centroid({startAngle:0, endAngle:0})+ ")";
-    }).text(number_of_fouls+"%").style("font-weight", "bold").attr("dx","10px").attr("id", "foul_percentage").style("opacity",0);
+    }).text(number_of_fouls+"%").style("font-weight", "bold").attr("dy","0px").attr("dx","10px").attr("id", "foul_percentage").style("opacity",0).attr("dy", function(d,i) {
+      if (parseInt(number_of_fouls) > 90) {
+        return "12px";
+      } else {
+        return "0px";
+      }
+    });
 
     text_trans = d3.select("#foul_percentage").transition();
     text_trans.ease("elastic").duration(1200).delay(3500).attr("transform", function(d) {
