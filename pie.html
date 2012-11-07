@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <title>Pie Chart</title>
+   <script type="text/javascript" src="d3.v2.min.js"></script>
+   <style type="text/css">
+
+body {
+ font: 10px sans-serif;
+}
+
+   </style>
+ </head>
+ <body>
+
+   <script type="text/javascript">
+   var donut = d3.layout.pie().startAngle(-Math.PI/2).endAngle(Math.PI/2);
+   //var donut = d3.layout.pie();
+   var color = d3.scale.category20();
+   var r = 150;
+   var arc = d3.svg.arc().outerRadius(r).innerRadius((r/2)+10);
+   var arc_full = d3.svg.arc().outerRadius(50).innerRadius(30);
+   // var arc_full = d3.svg.arc().startAngle(0).endAngle(Math.PI*2).outerRadius(50).innerRadius(30);
+   var arc_pct = d3.svg.arc().outerRadius(50).innerRadius(30);
+
+   var custom_tween = function(d) {
+    i = d3.interpolate({startAngle:0, endAngle:0}, d);
+    return function(t) {
+      return arc_pct(i(t));
+    }
+
+   }
+   
+    var tweenPie = function (b,c) {
+        
+        var i = d3.interpolate({endAngle: c.endAngle}, b);
+        return function(t) {
+          return arc(i(t));
+        };
+       }
+
+        var tweenDonut = function (b) {
+         b.innerRadius = r * .6;
+         var i = d3.interpolate({innerRadius: 0}, b);
+         return function(t) {
+           return arc(i(t));
+         };
+        }
+        
+        var tweenArc = function (b) {
+           //b.stopAngle = r * .6;
+           //b.innerRadius = r * .6;
+           var i = d3.interpolate({startAngle: -Math.PI*.5}, b);
+           return function(t) {
+             return arc(i(t));
+           };
+        
+        }
+
+
+    function bakepie(classname, data, x, y, r)
+    { 
+        //color could be made a parameter
+        
+        
+        
+
+        var pie = d3.select("#charts")
+            .append("svg:g")
+                .data([data.sort(d3.descending)])
+                // .data([data.sort(d3.ascending)])
+                .attr("class", classname);
+
+        var arcs = pie.selectAll("g.arc")
+           .data(donut)
+         .enter().append("svg:g")
+           .attr("class", "arc")
+           .attr("transform", "translate(" + x + "," + y + ")");
+
+
+        var paths = arcs.append("svg:path")
+           .attr("fill", function(d, i) { 
+              if (i==0) {
+                return "#ddd";
+              } else {
+                return "green";
+              }
+            });
+        
+       
+       arcs.append("text")
+       .attr("transform", function(d,i) {
+        return "translate("+arc.centroid(d)+") "
+        }).text(function(d) {
+        return d.value;
+       }).style("fill", "white")
+        .style("stroke","none")
+        .style("font-weight", "bold").style("font-size", "14px");
+
+       paths.transition()
+          .ease("cubic-out")
+          .duration(1000)
+          .delay(function(d,i) { return i*1000;})
+          .attrTween("d", function(d,i) {
+            if (i>0) {
+              return tweenPie(d, donut(d3.select("."+classname).datum())[0]);
+            } else {
+              return tweenPie(d, {startAngle:0, endAngle:0});
+            }
+          });
+
+        // paths.transition()
+        //    .ease("elastic")
+        //    //.delay(function(d, i) { return 2000 + i * 50; })
+        //    .duration(750)
+        //    .attrTween("d", tweenDonut);
+
+    }
+
+
+    //setup svg canvas
+    // d3.select("body")
+    //     .append("svg")
+    //        .attr("width", 1000)
+    //        .attr("height", 700)
+    //        .attr("id", "charts");
+
+
+    var data = d3.range(10).map(Math.random);
+    data = [100];
+    data2 = [30,70]
+    //bakepie("pie1", data, 100, 100, 100);
+    //data = d3.range(10).map(function(d) {return [1,1,1,1]});
+    //bakepie("pie2", data, 200, 200, 150);
+    //data = d3.range(4).map(Math.random);
+    //bakepie("pie2", data, 200, 200, 150);
+
+    svg = d3.select("body").append("svg").attr("width",800).attr("height",600);
+    
+    graphic = svg.append("g").attr("transform", "translate(100,100)");
+    graphic.append("path").attr("d", function(d) { return arc_full({startAngle:0, endAngle:Math.PI*2});}).style("fill", "#ddd");
+
+    graphic.append("path").attr("d", function(d) { return arc_pct({startAngle:0, endAngle:0});}).style("fill", "green").attr("id", "good_path");
+    my_trans = d3.select("#good_path").transition();
+    my_trans.ease("circle").duration(1500).attrTween("d", function(d) {
+      return custom_tween({endAngle:22.33*((Math.PI*2)/100)});
+    })
+   
+   </script>
+ </body>
+</html>
