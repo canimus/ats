@@ -1,5 +1,5 @@
 body {
-	font-family: 'Helvetica Neue', Arial, 'Sans';
+	font-family: 'Helvetica Neue', Arial, 'Ubuntu', sans-serif;
 	margin: 10px auto;
 	width: 960px;
 }
@@ -127,7 +127,7 @@ circle.legend {
 }
 
 text {
-  font-family: 'Helvetica Neue';
+  font-family: 'Helvetica Neue', Arial, 'Ubuntu', sans-serif;
   font-size: 11px;
 }
 

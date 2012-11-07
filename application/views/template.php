@@ -529,7 +529,7 @@
     }).text(percentage_good+"%").style("font-weight", "bold").attr("dx","10px").attr("id", "good_percentage").style("opacity",0);
 
     text_trans = d3.select("#good_percentage").transition();
-    text_trans.ease("elastic").duration(1200).delay(2000).attr("transform", function(d) {
+    text_trans.ease("elastic").duration(1200).delay(1800).attr("transform", function(d) {
       return "translate(" +arc_pct.centroid({startAngle:0, endAngle:percentage_good*((Math.PI*2)/100)})+ ")";
     }).style("opacity",1);
     
