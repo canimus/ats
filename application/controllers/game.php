@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Welcome extends CI_Controller {
+class Game extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -18,15 +18,26 @@ class Welcome extends CI_Controller {
 	 * @see http://codeigniter.com/user_guide/general/urls.html
 	 */
 	public function index() {
-		$this->load->model("Game_model", "coach");
-		$data['players'] = $this->coach->get_players();
-		$this->load->view('welcome_message');
+		$this->load->view('home');
+	}
+
+	public function players() {
+		$this->load->view('players');	
+	}
+
+	public function results() {
+		$this->load->view('results');	
+	}
+
+	public function contact() {
+		$this->load->view('contact');	
 	}
 	
-	public function test() {
+	public function summary($game_id = 1) {
 		$this->load->model("Game_model", "coach");
 		$data['players'] = $this->coach->get_players();
 		$data['games'] = $this->coach->get_games();
+		$data['game_id'] = $game_id;
 		$this->load->view('template', $data);
 	}
 
@@ -56,7 +67,7 @@ class Welcome extends CI_Controller {
     	->set_output(json_encode(array('stats' => $stats)));	
 	}
 
-	
+
 }
 
 /* End of file welcome.php */
